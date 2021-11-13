@@ -9,7 +9,7 @@ class Server {
     private app: Application;
     private port: string;
     private apiPaths = {
-        users     : '/api/usuarios',
+        users     : '/api/users',
         texts     : '/api/texts',
         documents : '/api/documents',
     }
