@@ -1,15 +1,15 @@
 import { DataTypes, Model } from "sequelize";
 import db from "../database/connection";
 
-interface TextsIntance extends Model {
-    encrytedText: string;
+interface DocumentsIntance extends Model {
+    encrytedDocument: string;
     algorithm: string;
     idCreador: number;
     state: boolean;
 }
 
-const Text = db.define<TextsIntance>( 'Text', {
-    encrytedText: {
+const Document = db.define<DocumentsIntance>( 'Document', {
+    encrytedDocument: {
         type: DataTypes.STRING
     },
     algorithm: {
@@ -23,4 +23,4 @@ const Text = db.define<TextsIntance>( 'Text', {
     }
 });
 
-export default Text;
+export default Document;

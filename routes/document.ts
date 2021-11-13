@@ -3,8 +3,8 @@ import { addDocument, deleteDocument, getDocuments } from '../controller/documen
 
 const router = Router();
 
-router.get( '/', getDocuments );
-router.post( '/', addDocument );
-router.delete( '/:id', deleteDocument );
+router.get   ( '/:id',      getDocuments );
+router.post  ( '/',      addDocument );
+router.delete( '/:id',   deleteDocument );
 
 export default router;
