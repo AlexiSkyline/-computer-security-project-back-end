@@ -3,9 +3,9 @@ import Text from '../models/texts';
 import User from '../models/user';
 
 export const getTexts = async ( req: Request, res: Response ) => {
-    const { idCreator } = req.body;
+    const { id } = req.params;
     try {
-        const existsCreator = await User.findByPk( idCreator ); 
+        const existsCreator = await User.findByPk( id ); 
 
         if( !existsCreator ) {
             return res.status( 404 ).json({
@@ -28,8 +28,8 @@ export const getTexts = async ( req: Request, res: Response ) => {
 }
 
 export const addText = async ( req: Request, res: Response ) => {
+    const { body }      = req;
     const { idCreator } = req.body;
-    const { body } = req;
     
     const existsCreator = await User.findByPk( idCreator ); 
 
@@ -49,11 +49,11 @@ export const addText = async ( req: Request, res: Response ) => {
 }
 
 export const deleteText = async ( req: Request, res: Response ) => {
-    const { id  } = req.params;
+    const { id  }       = req.params;
     const { idCreator } = req.body;
 
     try {    
-        const existsText = await Text.findByPk( id );    
+        const existsText    = await Text.findByPk( id );    
         const existsCreator = await User.findOne({ where: idCreator }); 
 
         if( !existsCreator ) {
@@ -66,7 +66,7 @@ export const deleteText = async ( req: Request, res: Response ) => {
             });
         }
 
-        await existsText.update({ estado: false });
+        await existsText.update({ state: false });
 
         res.json({
             msg: 'El texto ha sido eliminado correctamente',

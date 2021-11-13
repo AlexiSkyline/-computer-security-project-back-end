@@ -30,7 +30,7 @@ export const getDocuments = async ( req: Request, res: Response ) => {
 
 export const addDocument = async ( req: Request, res: Response ) => {
     const { idCreator } = req.body;
-    const { body } = req;
+    const { body }      = req;
     
     const existsCreator = await User.findByPk( idCreator ); 
 
@@ -44,16 +44,38 @@ export const addDocument = async ( req: Request, res: Response ) => {
     newDocument.save();
 
     res.json({
-        msg: 'El texto ha sido aagregado correctamente',
+        msg: 'El documento ha sido aagregado correctamente',
         text: newDocument
     });
 }
 
-export const deleteDocument = ( req: Request, res: Response ) => {
-    const { body } = req;
+export const deleteDocument = async ( req: Request, res: Response ) => {
+    const { id  }       = req.params;
+    const { idCreator } = req.body;
 
-    res.json({
-        msg: 'deleteDocument',
-        body: body
-    });
+    try {    
+        const existsDocument    = await Document.findByPk( id );    
+        const existsCreator     = await User.findOne({ where: idCreator }); 
+
+        if( !existsCreator ) {
+            return res.status( 403 ).json({
+                msg: 'El usuario no existe',
+            });
+        } else if( !existsDocument ) {
+            return res.status( 404 ).json({
+                msg: 'Error el documento ya ha sido eliminado',
+            });
+        }
+
+        await existsDocument.update({ state: false });
+
+        res.json({
+            msg: 'El documento ha sido eliminado correctamente',
+            Text: existsDocument
+        });
+    } catch (error) {
+        res.status( 404 ).json({
+            msg: 'Error en el servidor',
+        });
+    }
 }
