@@ -28,3 +28,32 @@ export const getDocuments = async ( req: Request, res: Response ) => {
     }
 }
 
+export const addDocument = async ( req: Request, res: Response ) => {
+    const { idCreator } = req.body;
+    const { body } = req;
+    
+    const existsCreator = await User.findByPk( idCreator ); 
+
+    if( !existsCreator ) {
+        return res.status( 404 ).json({
+            msg: 'El usuario no existe',
+        });
+    }
+
+    const newDocument = Document.build( body );
+    newDocument.save();
+
+    res.json({
+        msg: 'El texto ha sido aagregado correctamente',
+        text: newDocument
+    });
+}
+
+export const deleteDocument = ( req: Request, res: Response ) => {
+    const { body } = req;
+
+    res.json({
+        msg: 'deleteDocument',
+        body: body
+    });
+}
