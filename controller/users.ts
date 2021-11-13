@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import User from '../models/user';
 import bcryptjs from 'bcryptjs';
-import { Model } from 'sequelize';
 
 export const createUser = async ( req: Request, res: Response ) => {
     const { user_name, email, password, rol, createdAt, updatedAt } = req.body;

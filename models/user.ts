@@ -2,14 +2,14 @@ import { DataTypes, Model } from 'sequelize';
 import db from '../database/connection';
 
 interface UserIntance extends Model {
-    user_name: string;
+    userName: string;
     emial: string;
     password: string;
     rol: string;
 }
 
 const User = db.define<UserIntance>( 'User', {
-    user_name: {
+    userName: {
         type: DataTypes.STRING
     },
     email: {
