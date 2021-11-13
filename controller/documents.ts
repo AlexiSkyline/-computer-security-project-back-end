@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import Document from '../models/document';
 import User from '../models/user';
+import { noPermits, noUserExists, deleteSuccess, serverErrorMessage, addedSuccess, alreadyDelete } from './messages/messages';
 
 export const getDocuments = async ( req: Request, res: Response ) => {
     const { id } = req.params;
@@ -9,22 +10,19 @@ export const getDocuments = async ( req: Request, res: Response ) => {
         const existsCreator = await User.findByPk( id ); 
 
         if( !existsCreator ) {
-            return res.status( 404 ).json({
-                msg: 'El usuario no existe',
-            });
+            return res.status( 404 ).json({ msg: noUserExists });
         } 
         
         if ( !( existsCreator?.rol === 'admin' ) ) {
-            return res.status( 403 ).json({
-                msg: 'El usuario no tiene los permisos requeridos',
-            });
+            return res.status( 403 ).json({ msg: noPermits });
         }
-        // console.log( existsCreator?.rol );
+        
         const documents = await Document.findAll();
 
         res.json({ documents });
     } catch (error) {
-        res.status( 404 ).json({ msg: 'Hubo un error en el Servidor' });
+        console.log( error );
+        res.status( 404 ).json({ msg: serverErrorMessage });
     }
 }
 
@@ -32,21 +30,22 @@ export const addDocument = async ( req: Request, res: Response ) => {
     const { idCreator } = req.body;
     const { body }      = req;
     
-    const existsCreator = await User.findByPk( idCreator ); 
-
-    if( !existsCreator ) {
-        return res.status( 404 ).json({
-            msg: 'El usuario no existe',
-        });
+    try {
+        
+        const existsCreator = await User.findByPk( idCreator ); 
+        
+        if( !existsCreator ) {
+            return res.status( 404 ).json({ msg: noUserExists });
+        }
+        
+        const newDocument = Document.build( body );
+        newDocument.save();
+        
+        res.json({ msg: addedSuccess, text: newDocument });
+    } catch (error) {
+        console.log( error );
+        res.status( 404 ).json({ msg: serverErrorMessage });
     }
-
-    const newDocument = Document.build( body );
-    newDocument.save();
-
-    res.json({
-        msg: 'El documento ha sido aagregado correctamente',
-        text: newDocument
-    });
 }
 
 export const deleteDocument = async ( req: Request, res: Response ) => {
@@ -58,24 +57,20 @@ export const deleteDocument = async ( req: Request, res: Response ) => {
         const existsCreator     = await User.findOne({ where: idCreator }); 
 
         if( !existsCreator ) {
-            return res.status( 403 ).json({
-                msg: 'El usuario no existe',
-            });
+            return res.status( 403 ).json({ msg: noUserExists });
         } else if( !existsDocument ) {
-            return res.status( 404 ).json({
-                msg: 'Error el documento ya ha sido eliminado',
-            });
+            return res.status( 404 ).json({ msg: alreadyDelete });
         }
 
         await existsDocument.update({ state: false });
 
         res.json({
-            msg: 'El documento ha sido eliminado correctamente',
+            msg: deleteSuccess,
             Text: existsDocument
         });
     } catch (error) {
         res.status( 404 ).json({
-            msg: 'Error en el servidor',
+            msg: serverErrorMessage
         });
     }
 }

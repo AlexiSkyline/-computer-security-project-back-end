@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import Text from '../models/texts';
 import User from '../models/user';
+import { noPermits, noUserExists, deleteSuccess, serverErrorMessage, addedSuccess, alreadyDelete } from './messages/messages';
 
 export const getTexts = async ( req: Request, res: Response ) => {
     const { id } = req.params;
@@ -8,22 +9,19 @@ export const getTexts = async ( req: Request, res: Response ) => {
         const existsCreator = await User.findByPk( id ); 
 
         if( !existsCreator ) {
-            return res.status( 404 ).json({
-                msg: 'El usuario no existe',
-            });
+            return res.status( 404 ).json({ msg: noUserExists });
         } 
         
         if ( !( existsCreator?.rol === 'admin' ) ) {
-            return res.status( 403 ).json({
-                msg: 'El usuario no tiene los permisos requeridos',
-            });
+            return res.status( 403 ).json({ msg: noPermits });
         }
-        // console.log( existsCreator?.rol );
+        
         const texts = await Text.findAll();
 
         res.json({ texts });
     } catch (error) {
-        res.status( 404 ).json({ msg: 'Hubo un error en el Servidor' });
+        console.log( error );
+        res.status( 404 ).json({ msg: serverErrorMessage });
     }
 }
 
@@ -31,21 +29,22 @@ export const addText = async ( req: Request, res: Response ) => {
     const { body }      = req;
     const { idCreator } = req.body;
     
-    const existsCreator = await User.findByPk( idCreator ); 
-
-    if( !existsCreator ) {
-        return res.status( 404 ).json({
-            msg: 'El usuario no existe',
-        });
+    try {
+        
+        const existsCreator = await User.findByPk( idCreator ); 
+        
+        if( !existsCreator ) {
+            return res.status( 404 ).json({ msg: noUserExists });
+        }
+        
+        const existsText = Text.build( body );
+        existsText.save();
+        
+        res.json({ msg: addedSuccess, text: existsText });
+    } catch (error) {
+        console.log( error );
+        res.status( 404 ).json({ msg: serverErrorMessage });
     }
-
-    const existsText = Text.build( body );
-    existsText.save();
-
-    res.json({
-        msg: 'El texto ha sido aagregado correctamente',
-        text: existsText
-    });
 }
 
 export const deleteText = async ( req: Request, res: Response ) => {
@@ -57,24 +56,19 @@ export const deleteText = async ( req: Request, res: Response ) => {
         const existsCreator = await User.findOne({ where: idCreator }); 
 
         if( !existsCreator ) {
-            return res.status( 403 ).json({
-                msg: 'El usuario no existe',
-            });
+            return res.status( 403 ).json({ msg: noUserExists });
         } else if( !existsText ) {
-            return res.status( 404 ).json({
-                msg: 'Error el texto ya ha sido eliminado',
-            });
+            return res.status( 404 ).json({ msg: alreadyDelete });
         }
 
         await existsText.update({ state: false });
 
         res.json({
-            msg: 'El texto ha sido eliminado correctamente',
+            msg: deleteSuccess,
             Text: existsText
         });
     } catch (error) {
-        res.status( 404 ).json({
-            msg: 'Error en el servidor',
-        });
+        console.log( error );
+        res.status( 404 ).json({ msg: serverErrorMessage });
     }
 }
