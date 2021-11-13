@@ -3,6 +3,7 @@ import userRoutes from '../routes/user';
 import textRoutes from '../routes/text';
 import documentRoutes from '../routes/document';
 import cors from 'cors';
+import db from '../database/connection';
 
 class Server {
     private app: Application;
@@ -18,6 +19,7 @@ class Server {
         this.port = process.env.PORT || '3000';
 
         // Todo: Metodos iniciales
+        this.dataBaseConnection();
         this.middlewares();
         this.routes();
     }
@@ -25,6 +27,15 @@ class Server {
     middlewares() {
         this.app.use( cors() );
         this.app.use( express.json() );
+    }
+
+    async dataBaseConnection() {
+        try {
+            await db.authenticate();
+            console.log( 'DataBase Online.....' );
+        } catch (error) {
+            console.log( error );  
+        }
     }
 
     routes () {
