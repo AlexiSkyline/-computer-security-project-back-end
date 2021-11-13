@@ -5,6 +5,7 @@ interface TextsIntance extends Model {
     userencrytedTextName: string;
     algorithm: string;
     idCreador: number;
+    state: boolean;
 }
 
 const Text = db.define<TextsIntance>( 'Text', {
@@ -17,6 +18,9 @@ const Text = db.define<TextsIntance>( 'Text', {
     idCreator: {
         type: DataTypes.BIGINT
     },
+    state: {
+        type: DataTypes.BOOLEAN
+    }
 });
 
 export default Text;
