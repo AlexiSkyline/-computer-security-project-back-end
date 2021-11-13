@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import User from '../models/user';
 import bcryptjs from 'bcryptjs';
+import { Model } from 'sequelize';
 
 export const createUser = async ( req: Request, res: Response ) => {
     const { user_name, email, password, rol, createdAt, updatedAt } = req.body;
@@ -32,12 +33,18 @@ export const createUser = async ( req: Request, res: Response ) => {
     }
 }
 
-export const authUser = ( req: Request, res: Response ) => {
-    const { body } = req.params;
-    const { email, password } = req.params;
+export const authUser = async ( req: Request, res: Response ) => {
+    const { email, password } = req.body;
 
+    const existsEmail = await User.findOne({ where: { email } });
+
+    if( !( await bcryptjs.compare( password, existsEmail!.password ) ) )  {
+        res.json({
+            msg: 'No coinciden',
+         });
+    } 
+    
     res.json({
-       msg: 'AuthUser',
-       body: body,
+       infoUser: existsEmail,
     });
 }

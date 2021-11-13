@@ -1,7 +1,14 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import db from '../database/connection';
 
-const User = db.define( 'User', {
+interface UserIntance extends Model {
+    user_name: string;
+    emial: string;
+    password: string;
+    rol: string;
+}
+
+const User = db.define<UserIntance>( 'User', {
     user_name: {
         type: DataTypes.STRING
     },
