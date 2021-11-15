@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import Text from '../models/texts';
 import User from '../models/user';
+import viewText from '../models/view/viewTexts';
 import { noPermits, noUserExists, deleteSuccess, serverErrorMessage, addedSuccess, alreadyDelete } from './messages/messages';
 
 export const getTexts = async ( req: Request, res: Response ) => {
@@ -12,11 +13,11 @@ export const getTexts = async ( req: Request, res: Response ) => {
             return res.status( 404 ).json({ msg: noUserExists });
         } 
         
-        if ( !( existsCreator?.rol === 'admin' ) ) {
+        if ( !( existsCreator?.rol === 'desencriptador' ) ) {
             return res.status( 403 ).json({ msg: noPermits });
         }
         
-        const texts = await Text.findAll();
+        const texts = await viewText.findAll();
 
         res.json({ texts });
     } catch (error) {

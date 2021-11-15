@@ -49,7 +49,7 @@ export const addedSuccess = {
     alertMessage: 'Sea agregado correctamente',
     alertIcon: 'success',
     showConfirmButton: false,
-    timer: 1500,
+    timer: 2000,
 }
 
 export const userUsed = {
@@ -57,7 +57,7 @@ export const userUsed = {
     alertTitle: 'Error',
     alertMessage: 'Ya existe un usuario con ese mismo email',
     alertIcon: 'error',
-    showConfirmButton: false,
+    showConfirmButton: true,
     timer: false,
 }
 
@@ -79,11 +79,11 @@ export const loginSuccess = {
     timer: 1500,
 }
 
-export const passwordError = {
+export const passwordOrEmailError = {
     alert: true,
     alertTitle: 'Error',
     alertMessage: '!Correo y/o password incorrectas!',
     alertIcon: 'error',
-    showConfirmButton: false,
+    showConfirmButton: true,
     timer: false,
 }

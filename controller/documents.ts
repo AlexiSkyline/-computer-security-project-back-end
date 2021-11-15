@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import Document from '../models/document';
 import User from '../models/user';
+import viewDocument from '../models/view/viewDocuments';
 import { noPermits, noUserExists, deleteSuccess, serverErrorMessage, addedSuccess, alreadyDelete } from './messages/messages';
 
 export const getDocuments = async ( req: Request, res: Response ) => {
@@ -13,11 +14,11 @@ export const getDocuments = async ( req: Request, res: Response ) => {
             return res.status( 404 ).json({ msg: noUserExists });
         } 
         
-        if ( !( existsCreator?.rol === 'admin' ) ) {
+        if ( !( existsCreator?.rol === 'desencriptador' ) ) {
             return res.status( 403 ).json({ msg: noPermits });
         }
         
-        const documents = await Document.findAll();
+        const documents = await viewDocument.findAll();
 
         res.json({ documents });
     } catch (error) {
