@@ -22,7 +22,7 @@ export const createUser = async ( req: Request, res: Response ) => {
         const newUser = User.build({ userName, email, password: passwordHash, rol, createdAt, updatedAt });
         await newUser.save();
 
-        res.json({ newUser, msg: userCreatedSuccess, ruta: rol === 'desencriptador' ? 'admin.html': 'index.html'  });
+        res.json({ newUser, msg: userCreatedSuccess, ruta: rol === 'desencriptador' ? 'adminTexts.html': 'index.html'  });
     } catch (error) {
         console.log( error );
         res.status( 404 ).json({ msg: serverErrorMessage });
@@ -41,7 +41,7 @@ export const authUser = async ( req: Request, res: Response ) => {
             return res.status( 403 ).json({ msg: passwordOrEmailError });
         } 
         
-        res.json({ infoUser: existsEmail, msg: loginSuccess, ruta: existsEmail!.rol === 'desencriptador' ? 'admin.html': 'index.html' });
+        res.json({ infoUser: existsEmail, msg: loginSuccess, ruta: existsEmail!.rol === 'desencriptador' ? 'adminTexts.html': 'index.html' });
     } catch (error) {
         console.log( error );
         res.status( 404 ).json({ msg: serverErrorMessage });
